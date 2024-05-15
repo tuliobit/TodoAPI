@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoAPI.Data;
 using TodoAPI.DTOs;
+using TodoAPI.Mappers;
 using TodoAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -38,8 +39,9 @@ namespace TodoAPI.Controllers
 
         // POST <TodoController>
         [HttpPost]
-        public IActionResult Create([FromBody] Todo todo)
+        public IActionResult Create([FromBody] TodoDto todoDto)
         {
+            var todo = todoDto.ToTodoFromDto();
             _context.Todos.Add(todo);
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetById), new { id = todo.Id }, todo);
@@ -47,7 +49,7 @@ namespace TodoAPI.Controllers
 
         // PUT <TodoController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] UpdateTodoRequestDto updateDto)
+        public IActionResult Update(int id, [FromBody] TodoDto updateDto)
         {
             var todo = _context.Todos.FirstOrDefault(x => x.Id == id);
             if (todo == null)

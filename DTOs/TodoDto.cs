@@ -1,6 +1,6 @@
 ﻿namespace TodoAPI.DTOs
 {
-    public class UpdateTodoRequestDto
+    public class TodoDto
     {
         public string Title { get; set; } = String.Empty;
         public DateTime Deadline { get; set; }
