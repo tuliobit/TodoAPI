@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoAPI.Data;
 using TodoAPI.DTOs;
+using TodoAPI.Interfaces;
 using TodoAPI.Mappers;
 using TodoAPI.Models;
 
@@ -13,17 +14,17 @@ namespace TodoAPI.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
-        public TodoController(ApplicationDBContext context)
+        private readonly ITodoRepository _todoRepo;
+        public TodoController(ITodoRepository todoRepo)
         {
-            _context = context;
+            _todoRepo = todoRepo;
         }
 
         // GET: <TodoController>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var todos = await _context.Todos.ToListAsync();
+            var todos = await _todoRepo.GetAllAsync();
             return Ok(todos);
         }
 
@@ -31,7 +32,7 @@ namespace TodoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var todo = await _context.Todos.FindAsync(id);
+            var todo = await _todoRepo.GetByIdAsync(id);
             if (todo == null)
             {
                 return NotFound();
@@ -44,37 +45,31 @@ namespace TodoAPI.Controllers
         public async Task<IActionResult> Create([FromBody] TodoDto todoDto)
         {
             var todo = todoDto.ToTodoFromDto();
-            await _context.Todos.AddAsync(todo);
-            await _context.SaveChangesAsync();
+            await _todoRepo.CreateAsync(todo);            
             return CreatedAtAction(nameof(GetById), new { id = todo.Id }, todo);
         }
 
         // PUT <TodoController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TodoDto updateDto)
+        public async Task<IActionResult> Update(int id, [FromBody] TodoDto todoDto)
         {
-            var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
-            if (todo == null)
+            var todoModel = await _todoRepo.UpdateAsync(id, todoDto);            
+            if (todoModel == null)
             {
                 return NotFound();
             }
-
-            todo.Title = updateDto.Title;
-            todo.Deadline = updateDto.Deadline;
-            todo.IsComplete = updateDto.IsComplete;
-
-            await _context.SaveChangesAsync();
-            return Ok(todo);
+            return Ok(todoModel.ToTodoDto());
         }
 
         // DELETE <TodoController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
-            if (todo == null) { return NotFound(); }
-            _context.Todos.Remove(todo);
-            await _context.SaveChangesAsync();
+            var todo = await _todoRepo.DeleteAsync(id);
+            if (todo == null) 
+            { 
+                return NotFound(); 
+            }
             return NoContent();
         }
     }
