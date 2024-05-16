@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoAPI.Data;
 using TodoAPI.Interfaces;
 using TodoAPI.Repositories;
+using TodoAPI.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 });
 
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+builder.Services.AddScoped<TodoValidator>();
 
 var app = builder.Build();
 

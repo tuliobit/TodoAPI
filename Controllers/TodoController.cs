@@ -5,6 +5,7 @@ using TodoAPI.DTOs;
 using TodoAPI.Interfaces;
 using TodoAPI.Mappers;
 using TodoAPI.Models;
+using TodoAPI.Validations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,9 +16,11 @@ namespace TodoAPI.Controllers
     public class TodoController : ControllerBase
     {
         private readonly ITodoRepository _todoRepo;
-        public TodoController(ITodoRepository todoRepo)
+        private readonly TodoValidator _validator;
+        public TodoController(ITodoRepository todoRepo, TodoValidator validator)
         {
             _todoRepo = todoRepo;
+            _validator = validator;
         }
 
         // GET: <TodoController>
@@ -59,11 +62,21 @@ namespace TodoAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var todoModel = await _todoRepo.UpdateAsync(id, todoDto);            
-            if (todoModel == null)
-            {
+            var existingTodo = await _todoRepo.GetByIdAsync(id);
+            if (existingTodo == null)
                 return NotFound();
+
+            var errors = _validator.ValidateUpdate(existingTodo, todoDto);
+            if (errors.Count > 0)
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+                return BadRequest(ModelState);
             }
+
+            var todoModel = await _todoRepo.UpdateAsync(id, todoDto);
             return Ok(todoModel);
         }
 
