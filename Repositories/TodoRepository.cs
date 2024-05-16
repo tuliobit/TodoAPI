@@ -31,7 +31,7 @@ namespace TodoAPI.Repositories
             return todoModel;
         }
 
-        public async Task<Todo?> UpdateAsync(int id, TodoDto todoDto)
+        public async Task<Todo?> UpdateAsync(int id, UpdateTodoDto todoDto)
         {
             var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
             if (todo == null)

@@ -5,9 +5,18 @@ namespace TodoAPI.Mappers
 {
     public static class TodoMappers
     {
-        public static TodoDto ToTodoDto(this Todo todoModel)
+        public static CreateTodoDto ToCreateTodoDto(this Todo todoModel)
         {
-            return new TodoDto
+            return new CreateTodoDto
+            {
+                Title = todoModel.Title,
+                Deadline = todoModel.Deadline,
+            };
+        }
+
+        public static UpdateTodoDto ToUpdateTodoDto(this Todo todoModel)
+        {
+            return new UpdateTodoDto
             {
                 Title = todoModel.Title,
                 Deadline = todoModel.Deadline,
@@ -15,7 +24,16 @@ namespace TodoAPI.Mappers
             };
         }
 
-        public static Todo ToTodoFromDto(this TodoDto todoDto)
+        public static Todo ToTodoFromCreateDto(this CreateTodoDto todoDto)
+        {
+            return new Todo
+            {
+                Title = todoDto.Title,
+                Deadline = todoDto.Deadline,
+                IsComplete = false,
+            };
+        }
+        public static Todo ToTodoFromUpdateDto(this UpdateTodoDto todoDto)
         {
             return new Todo
             {

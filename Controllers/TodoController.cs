@@ -42,23 +42,29 @@ namespace TodoAPI.Controllers
 
         // POST <TodoController>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TodoDto todoDto)
+        public async Task<IActionResult> Create([FromBody] CreateTodoDto todoDto)
         {
-            var todo = todoDto.ToTodoFromDto();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var todo = todoDto.ToTodoFromCreateDto();
             await _todoRepo.CreateAsync(todo);            
             return CreatedAtAction(nameof(GetById), new { id = todo.Id }, todo);
         }
 
         // PUT <TodoController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TodoDto todoDto)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateTodoDto todoDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var todoModel = await _todoRepo.UpdateAsync(id, todoDto);            
             if (todoModel == null)
             {
                 return NotFound();
             }
-            return Ok(todoModel.ToTodoDto());
+            return Ok(todoModel);
         }
 
         // DELETE <TodoController>/5

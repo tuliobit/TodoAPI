@@ -8,7 +8,7 @@ namespace TodoAPI.Interfaces
         Task<List<Todo>> GetAllAsync();
         Task<Todo?> GetByIdAsync(int id);
         Task<Todo> CreateAsync(Todo todoModel);
-        Task<Todo?> UpdateAsync(int id, TodoDto todoDto);
+        Task<Todo?> UpdateAsync(int id, UpdateTodoDto todoDto);
         Task<Todo?> DeleteAsync(int id);
     }
 }
