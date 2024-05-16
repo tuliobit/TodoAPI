@@ -3,6 +3,7 @@ using TodoAPI.Data;
 using TodoAPI.DTOs;
 using TodoAPI.Interfaces;
 using TodoAPI.Models;
+using TodoAPI.Queries;
 
 namespace TodoAPI.Repositories
 {
@@ -14,9 +15,31 @@ namespace TodoAPI.Repositories
             _context = context;
         }
 
-        public async Task<List<Todo>> GetAllAsync()
+        public async Task<List<Todo>> GetAllAsync(TodoQueryObject query)
         {
-            return await _context.Todos.ToListAsync();
+            var todos = _context.Todos.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Title))
+            {
+                todos = todos.Where(t => t.Title.Contains(query.Title));
+            }
+
+            if (query.DeadlineFrom != null)
+            {
+                todos = todos.Where(t => t.Deadline >= query.DeadlineFrom);
+            }
+
+            if (query.DeadlineUntil != null)
+            {
+                todos = todos.Where(t => t.Deadline <= query.DeadlineUntil);
+            }
+
+            if (query.IsComplete != null)
+            {
+                todos = todos.Where(t => t.IsComplete == query.IsComplete);
+            }
+
+            return await todos.ToListAsync();
         }
 
         public async Task<Todo?> GetByIdAsync(int id)

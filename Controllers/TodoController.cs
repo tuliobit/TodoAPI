@@ -5,6 +5,7 @@ using TodoAPI.DTOs;
 using TodoAPI.Interfaces;
 using TodoAPI.Mappers;
 using TodoAPI.Models;
+using TodoAPI.Queries;
 using TodoAPI.Validations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -25,9 +26,9 @@ namespace TodoAPI.Controllers
 
         // GET: <TodoController>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] TodoQueryObject query)
         {
-            var todos = await _todoRepo.GetAllAsync();
+            var todos = await _todoRepo.GetAllAsync(query);
             return Ok(todos);
         }
 
