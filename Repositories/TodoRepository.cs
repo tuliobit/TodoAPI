@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TodoAPI.Data;
 using TodoAPI.DTOs;
 using TodoAPI.Interfaces;
@@ -19,6 +20,7 @@ namespace TodoAPI.Repositories
         {
             var todos = _context.Todos.AsQueryable();
 
+            // Filtros
             if (!string.IsNullOrWhiteSpace(query.Title))
             {
                 todos = todos.Where(t => t.Title.Contains(query.Title));
@@ -37,6 +39,19 @@ namespace TodoAPI.Repositories
             if (query.IsComplete != null)
             {
                 todos = todos.Where(t => t.IsComplete == query.IsComplete);
+            }
+
+            // Ordenação
+            if (!string.IsNullOrWhiteSpace(query.OrderBy))
+            {
+                if (query.OrderBy.Equals("Title", StringComparison.OrdinalIgnoreCase))
+                {
+                    todos = query.SortDescending ? todos.OrderByDescending(t => t.Title) : todos.OrderBy(t => t.Title);
+                }
+                if (query.OrderBy.Equals("Deadline", StringComparison.OrdinalIgnoreCase))
+                {
+                    todos = query.SortDescending ? todos.OrderByDescending(t => t.Deadline) : todos.OrderBy(t => t.Deadline);
+                }
             }
 
             return await todos.ToListAsync();
