@@ -55,6 +55,7 @@ A API Todo oferece endpoints para gerenciar uma lista de to-dos. Ela permite ope
 - **Corpo da Requisição**:
   - `title` (obrigatório): O novo título do to-do. Deve ter entre 3 e 50 caracteres.
   - `deadline` (obrigatório): O novo prazo do to-do. Deve ser futuro ou inalterado.
+  - `isComplete` (obrigatório): O estado do to-do. **To-dos completos não podem ser alterados**.
 - **Resposta**:
   - **Status 200 OK**: Sucesso. Retorna JSON do to-do atualizado.
   - **Status 400 Bad Request**: Requisição inválida. O corpo da requisição está ausente ou mal formatado. Retorna mensagem respectiva ao erro no modelo.
