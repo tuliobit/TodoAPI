@@ -2,7 +2,7 @@
 
 A Todo API fornece uma interface simples para gerenciar uma lista de tarefas (to-dos). Suporta operações para criar, ler, atualizar e deletar itens de tarefas. A API é construída usando ASP.NET 8 e está hospedada no Azure. Está disponível no GitHub [aqui](https://github.com/tuliobit/TodoAPI).
 
-A documentação da API é gerada automaticamente usando o Swagger e está em conformidade com a especificação OpenAPI.
+A documentação da API é gerada automaticamente em ambiente de desenvolvimento usando o Swagger e está em conformidade com a especificação OpenAPI. Uma documentação dos endpoints também está disponível [aqui](API_DOC.md)
 
 ## Começando
 
